@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite de 15 Anos — Liandra</title>
+<style>
+  :root{
+    --rosa:#d63384;
+    --rosa-claro:#fdeef5;
+    --dourado:#c9a24b;
+    --dourado-claro:#e9d8a6;
+    --escuro:#3a2b33;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Georgia', serif;
+    color:var(--escuro);
+    background:var(--rosa-claro);
+  }
+  h1,h2,h3{font-family:'Didot','Playfair Display',Georgia,serif;}
+
+  /* ===== HERO COM VÍDEO NO BODY ===== */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    overflow:hidden;
+  }
+  .hero video.bg-video{
+    position:absolute;
+    top:0;left:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    z-index:0;
+    opacity: 0.5; /* Transparência aplicada ao vídeo de fundo */
+  }
+  .hero .overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(rgba(58,43,51,.55),rgba(58,43,51,.65));
+    z-index:1;
+  }
+  .hero .content{
+    position:relative;z-index:2;
+    color:#fff;
+    padding:2rem;
+    max-width:800px;
+  }
+  .hero .pre-titulo{
+    font-family:Georgia,serif;
+    letter-spacing:.4em;
+    text-transform:uppercase;
+    font-size:.85rem;
+    color:var(--dourado-claro);
+    margin-bottom:1rem;
+  }
+  .hero h1{
+    font-size:clamp(3rem,9vw,6.5rem);
+    font-weight:400;
+    line-height:1.05;
+  }
+  .hero h1 .nome{
+    display:block;
+    background:linear-gradient(90deg,#f6e3b4,#d4af5f,#f6e3b4);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero .data{
+    margin-top:1.2rem;
+    font-size:1.2rem;
+    letter-spacing:.2em;
+  }
+  .divisor{
+    width:80px;height:2px;margin:1.4rem auto;
+    background:var(--dourado);
+    border:none;
+  }
+  .btn{
+    display:inline-block;
+    margin-top:1.8rem;
+    padding:.9rem 2.4rem;
+    border:1.5px solid var(--dourado);
+    color:#fff;
+    text-decoration:none;
+    letter-spacing:.25em;
+    text-transform:uppercase;
+    font-size:.8rem;
+    transition:.3s;
+    background:rgba(0,0,0,.15);
+  }
+  .btn:hover{background:var(--dourado);color:var(--escuro);}
+
+  /* Indicador scroll */
+  .scroll-hint{
+    position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+    z-index:2;color:#fff;font-size:1.6rem;animation:pulsa 2s infinite;
+  }
+  @keyframes pulsa{0%,100%{opacity:.4;transform:translate(-50%,0);}50%{opacity:1;transform:translate(-50%,8px);}}
+
+  /* ===== CONTAGEM ===== */
+  .contagem{
+    padding:5rem 1.5rem;
+    text-align:center;
+  }
+  .contagem h2{font-size:2rem;color:var(--rosa);margin-bottom:.4rem;}
+  .contagem p{color:#8a6d7a;margin-bottom:2rem;}
+  .timer{
+    display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  }
+  .timer .caixa{
+    background:#fff;
+    border:1px solid var(--dourado-claro);
+    border-radius:12px;
+    min-width:92px;
+    padding:1.2rem .5rem;
+    box-shadow:0 6px 18px rgba(214,51,132,.08);
+  }
+  .timer .num{font-size:2.2rem;color:var(--rosa);font-weight:bold;}
+  .timer .rotulo{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#9b8290;}
+
+  /* ===== CARROSSEL ===== */
+  .carrossel-section{
+    padding:4rem 0 5rem;
+    background:linear-gradient(180deg,var(--rosa-claro),#fbe4ef);
+    text-align:center;
+  }
+  .carrossel-section h2{font-size:2rem;color:var(--rosa);margin-bottom:.3rem;}
+  .carrossel-section .sub{color:#8a6d7a;margin-bottom:2.2rem;}
+
+  .carrossel{
+    position:relative;
+    max-width:900px;
+    margin:0 auto;
+    aspect-ratio:16/9;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(58,43,51,.25);
+  }
+  @media(max-width:640px){.carrossel{aspect-ratio:4/5;}}
+  .slide{
+    position:absolute;inset:0;
+    opacity:0;
+    transition:opacity .8s ease;
+    pointer-events:none;
+  }
+  .slide.ativo{opacity:1;pointer-events:auto;}
+  .slide img,.slide video{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .slide .legenda{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    padding:1.4rem 1.5rem;
+    background:linear-gradient(transparent,rgba(58,43,51,.75));
+    color:#fff;text-align:left;
+    font-style:italic;
+  }
+
+  .seta{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:46px;height:46px;border-radius:50%;
+    border:none;cursor:pointer;
+    background:rgba(255,255,255,.85);
+    color:var(--rosa);
+    font-size:1.3rem;
+    z-index:5;
+    transition:.25s;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .seta:hover{background:var(--rosa);color:#fff;}
+  .seta.esq{left:12px;}
+  .seta.dir{right:12px;}
+
+  .dots{
+    display:flex;gap:.6rem;justify-content:center;margin-top:1.4rem;
+  }
+  .dot{
+    width:11px;height:11px;border-radius:50%;
+    border:1.5px solid var(--rosa);
+    background:transparent;cursor:pointer;transition:.3s;padding:0;
+  }
+  .dot.ativo{background:var(--rosa);transform:scale(1.25);}
+
+  /* ===== DETALHES ===== */
+  .detalhes{
+    padding:4.5rem 1.5rem;
+    text-align:center;
+    background:#fff;
+  }
+  .detalhes h2{color:var(--rosa);font-size:2rem;margin-bottom:2.5rem;}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:1.6rem;
+    max-width:950px;margin:0 auto;
+  }
+  .card{
+    background:var(--rosa-claro);
+    border:1px solid var(--dourado-claro);
+    border-radius:14px;
+    padding:2rem 1.4rem;
+  }
+  .card .icone{font-size:1.9rem;margin-bottom:.7rem;}
+  .card h3{color:var(--escuro);margin-bottom:.4rem;font-size:1.05rem;}
+  .card p{color:#7a606e;font-size:.95rem;line-height:1.55;}
+
+  /* ===== RSVP ===== */
+  .rsvp{
+    padding:4.5rem 1.5rem 5.5rem;
+    text-align:center;
+    background:linear-gradient(180deg,#fff,var(--rosa-claro));
+  }
+  .rsvp h2{color:var(--rosa);font-size:2rem;margin-bottom:.4rem;}
+  .rsvp p{color:#8a6d7a;margin-bottom:1.8rem;}
+  .rsvp form{
+    max-width:460px;margin:0 auto;
+    display:flex;flex-direction:column;gap:.9rem;
+  }
+  .rsvp input,.rsvp select{
+    padding:.85rem 1rem;
+    border:1px solid var(--dourado-claro);
+    border-radius:8px;
+    font-size:1rem;
+    font-family:inherit;
+    background:#fff;
+    outline:none;
+  }
+  .rsvp input:focus,.rsvp select:focus{border-color:var(--rosa);}
+  .rsvp button{
+    padding:.95rem;
+    background:var(--rosa);
+    color:#fff;
+    border:none;border-radius:8px;
+    font-size:.9rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:.3s;
+    font-family:Georgia,serif;
+  }
+  .rsvp button:hover{background:#b02468;}
+  .msg-ok{
+    display:none;
+    margin-top:1rem;
+    color:var(--rosa);
+    font-style:italic;
+  }
+
+  footer{
+    background:var(--escuro);
+    color:#cbb4bf;
+    text-align:center;
+    padding:1.6rem;
+    font-size:.85rem;
+    letter-spacing:.1em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO: vídeo rodando no fundo do body ===== -->
+<header class="hero" id="topo">
+  <!-- Vídeo inserido com o nome exato e atributos corretos para autoplay de fundo -->
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="WhatsApp Video 2026-10-05 at 21.22.20.mp4" type="video/mp4">
+  </video>
+  <div class="overlay"></div>
+
+  <div class="content">
+    <div class="pre-titulo">Você está convidado(a) para</div>
+    <h1>Os 15 Anos <span class="nome">de Liandra</span></h1>
+    <hr class="divisor">
+    <div class="data">✦ Sábado, 12 de Dezembro de 2026 · 20h ✦</div>
+    <a href="#rsvp" class="btn">Confirmar Presença</a>
+  </div>
+
+  <div class="scroll-hint">▾</div>
+</header>
+
+<!-- ===== CONTAGEM REGRESSIVA ===== -->
+<section class="contagem">
+  <h2>Faltam poucos dias...</h2>
+  <p>Para a noite mais esperada</p>
+  <div class="timer" id="timer">
+    <div class="caixa"><div class="num" id="dias">--</div><div class="rotulo">Dias</div></div>
+    <div class="caixa"><div class="num" id="horas">--</div><div class="rotulo">Horas</div></div>
+    <div class="caixa"><div class="num" id="min">--</div><div class="rotulo">Min</div></div>
+    <div class="caixa"><div class="num" id="seg">--</div><div class="rotulo">Seg</div></div>
+  </div>
+</section>
+
+<!-- ===== CARROSSEL DE FOTOS E VÍDEOS ===== -->
+<section class="carrossel-section" id="momentos">
+  <h2>✦ Momentos ✦</h2>
+  <p class="sub">Um pouco da nossa história em imagens</p>
+
+  <div class="carrossel" id="carrossel">
+    <!-- Slide 1: VÍDEO -->
+    <div class="slide ativo" data-tipo="video">
+      <video src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+             muted playsinline loop></video>
+      <div class="legenda">Ensaios e preparativos ✦</div>
+    </div>
+
+    <!-- Slide 2: FOTO -->
+    <div class="slide" data-tipo="imagem">
+      <img src="https://picsum.photos/seed/debut1/1200/675" alt="Momento 1">
+      <div class="legenda">O grande dia se aproxima</div>
+    </div>
+
+    <!-- Slide 3: FOTO -->
+    <div class="slide" data-tipo="imagem">
+      <img src="https://picsum.photos/seed/debut2/1200/675" alt="Momento 2">
+      <div class="legenda">Amigas de todas as horas</div>
+    </div>
+
+    <!-- Slide 4: FOTO -->
+    <div class="slide" data-tipo="imagem">
+      <img src="https://picsum.photos/seed/debut3/1200/675" alt="Momento 3">
+      <div class="legenda">Sonhos que viram realidade</div>
+    </div>
+
+    <button class="seta esq" id="btnAnt" aria-label="Anterior">❮</button>
+    <button class="seta dir" id="btnProx" aria-label="Próximo">❯</button>
+  </div>
+
+  <div class="dots" id="dots"></div>
+</section>
+
+<!-- ===== DETALHES DO EVENTO ===== -->
+<section class="detalhes" id="detalhes">
+  <h2>Detalhes do Baile</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="icone">📅</div>
+      <h3>Data &amp; Hora</h3>
+      <p>12 de dezembro de 2026<br>Sábado, a partir das 20h</p>
+    </div>
+    <div class="card">
+      <div class="icone">📍</div>
+      <h3>Local</h3>
+      <p>Salão Encantado Eventos<br>Rua das Flores, 123 — São Paulo/SP</p>
+    </div>
+    <div class="card">
+      <div class="icone">👑</div>
+      <h3>Traje</h3>
+      <p>Gala<br>Cor: tons de rosa e dourado</p>
+    </div>
+    <div class="card">
+      <div class="icone">💝</div>
+      <h3>Presentes</h3>
+      <p>Sua presença é nosso maior presente.<br>Listas disponíveis em breve.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RSVP ===== -->
+<section class="rsvp" id="rsvp">
+  <h2>Confirme sua Presença</h2>
+  <p>Por favor, responda até 28 de novembro</p>
+  <form id="formRsvp">
+    <input type="text" id="nome" placeholder="Seu nome completo" required>
+    <input type="number" id="qtd" placeholder="Quantas pessoas?" min="1" max="10" required>
+    <select id="presenca" required>
+      <option value="" disabled selected>Você comparecerá?</option>
+      <option value="sim">Sim, estarei lá! 🎉</option>
+      <option value="nao">Infelizmente não poderei 💔</option>
+    </select>
+    <button type="submit">Enviar Confirmação</button>
+  </form>
+  <div class="msg-ok" id="msgOk">Obrigada! Sua resposta foi registada com carinho ✨</div>
+</section>
+
+<footer>
+  ✦ Com amor, família de Liandra ✦<br>
+  Esperamos por si!
+</footer>
+
+<script>
+/* ================= CONTAGEM REGRESSIVA =================
+   Altere a data do evento aqui: */
+const DATA_EVENTO = new Date("2026-12-12T20:00:00-03:00");
+
+function atualizaTimer(){
+  const diff = DATA_EVENTO - new Date();
+  if(diff <= 0){
+    document.getElementById("timer").innerHTML =
+      '<div class="caixa" style="min-width:auto;padding:1.2rem 2rem;"><div class="num" style="font-size:1.4rem;">É hoje! 🎉</div></div>';
+    return;
+  }
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor(diff%86400000/3600000);
+  const m = Math.floor(diff%3600000/60000);
+  const s = Math.floor(diff%60000/1000);
+  document.getElementById("dias").textContent = d;
+  document.getElementById("horas").textContent = h;
+  document.getElementById("min").textContent = m;
+  document.getElementById("seg").textContent = s;
+}
+setInterval(atualizaTimer,1000);
+atualizaTimer();
+
+/* ================= CARROSSEL ================= */
+const slides   = Array.from(document.querySelectorAll(".slide"));
+const dotsBox  = document.getElementById("dots");
+let indice     = 0;
+let timerAuto  = null;
+
+/* cria os pontinhos */
+slides.forEach((_,i)=>{
+  const b = document.createElement("button");
+  b.className = "dot" + (i===0?" ativo":"");
+  b.setAttribute("aria-label","Slide " + (i+1));
+  b.addEventListener("click",()=>{ irPara(i); reiniciaAuto(); });
+  dotsBox.appendChild(b);
+});
+const dots = Array.from(dotsBox.children);
+
+function pausaVideos(){
+  slides.forEach(s=>{
+    const v = s.querySelector("video");
+    if(v) v.pause();
+  });
+}
+
+function tocaVideoSeHouver(){
+  const slide = slides[indice];
+  const v = slide.querySelector("video");
+  if(v){
+    v.currentTime = 0;
+    v.play().catch(()=>{});
+    /* quando o vídeo acaba, avança sozinho */
+    v.onended = () => proximo();
+  }
+}
+
+function irPara(i){
+  pausaVideos();
+  slides[indice].classList.remove("ativo");
+  dots[indice].classList.remove("ativo");
+  indice = (i + slides.length) % slides.length;
+  slides[indice].classList.add("ativo");
+  dots[indice].classList.add("ativo");
+  tocaVideoSeHouver();
+}
+
+function proximo(){ irPara(indice+1); }
+function anterior(){ irPara(indice-1); }
+
+/* avanço automático a cada 5s para imagens
+   (vídeos avançam sozinhos quando terminam) */
+function reiniciaAuto(){
+  clearInterval(timerAuto);
+  timerAuto = setInterval(()=>{
+    const tipo = slides[indice].dataset.tipo;
+    if(tipo === "imagem") proximo();
+  },5000);
+}
+
+document.getElementById("btnProx").addEventListener("click",()=>{ proximo(); reiniciaAuto(); });
+document.getElementById("btnAnt").addEventListener("click",()=>{ anterior(); reiniciaAuto(); });
+
+/* navegação por teclado */
+document.addEventListener("keydown",e=>{
+  if(e.key === "ArrowRight"){ proximo(); reiniciaAuto(); }
+  if(e.key === "ArrowLeft"){ anterior(); reiniciaAuto(); }
+});
+
+/* arraste no telemóvel */
+let tocaX = null;
+const car = document.getElementById("carrossel");
+car.addEventListener("touchstart",e=>{ tocaX = e.touches[0].clientX; },{passive:true});
+car.addEventListener("touchend",e=>{
+  if(tocaX === null) return;
+  const dx = e.changedTouches[0].clientX - tocaX;
+  if(Math.abs(dx) > 50){ dx < 0 ? proximo() : anterior(); reiniciaAuto(); }
+  tocaX = null;
+},{passive:true});
+
+/* inicia o primeiro slide */
+tocaVideoSeHouver();
+reiniciaAuto();
+
+/* ================= RSVP (front-end apenas) ================= */
+document.getElementById("formRsvp").addEventListener("submit",e=>{
+  e.preventDefault();
+  document.getElementById("msgOk").style.display = "block";
+  e.target.reset();
+});
+</script>
+</body>
+</html>
